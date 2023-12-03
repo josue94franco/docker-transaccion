@@ -57,3 +57,7 @@ class ProcesadorCSV:
         resumen['Importe medio del débito'] = total_debito / total_transacciones_debito if total_transacciones_debito > 0 else 0
 
         return resumen
+    
+    
+
+

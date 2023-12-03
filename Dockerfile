@@ -12,3 +12,7 @@ COPY . /app
 
 # Define el comando predeterminado para ejecutar tu aplicación
 CMD ["python", "main.py"]
+
+#para ejecutar el docker: 
+# Se crea el contenerdor --> build -t transaccion1 .
+#Se ejecuta el contenedor --> docker run -it transaccion1

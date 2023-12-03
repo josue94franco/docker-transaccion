@@ -17,22 +17,27 @@ import smtplib
 import ssl
 from email.message import EmailMessage
 from transaccion import ProcesadorCSV
+
+archivo_csv = "transacciones.csv"
+procesador = ProcesadorCSV(archivo_csv)
+procesador.cargar_transacciones()
+
 import base64
-def generar_resumen_texto(resumen):
-    texto_resumen = f"El saldo total es {resumen['Saldo total']:.2f}\n\n"
+resumen = procesador.generar_resumen()
 
-    for mes, num_transacciones in resumen['Número de transacciones por mes'].items():
-        texto_resumen += f"Número de transacciones en {mes}: {num_transacciones}\n"
+# Mostrar el resumen
+print(f"El saldo total es {resumen['Saldo total']:.2f}")
 
-    for mes, monto_promedio in resumen['Monto promedio del crédito por mes'].items():
-        texto_resumen += f"Monto promedio del crédito en {mes}: {monto_promedio:.2f}\n"
+for mes, num_transacciones in resumen['Número de transacciones por mes'].items():
+    print(f"Número de transacciones en {mes}: {num_transacciones}")
 
-    for mes, monto_promedio in resumen['Monto promedio del débito por mes'].items():
-        texto_resumen += f"Monto promedio del débito en {mes}: {monto_promedio:.2f}\n"
+for mes, monto_promedio in resumen['Monto promedio del crédito por mes'].items():
+    print(f"Monto promedio del crédito en {mes}: {monto_promedio:.2f}")
 
-    texto_resumen += f"Importe medio del débito: {resumen['Importe medio del débito']:.2f}\n"
+for mes, monto_promedio in resumen['Monto promedio del débito por mes'].items():
+    print(f"Monto promedio del débito en {mes}: {monto_promedio:.2f}")
 
-    return texto_resumen
+print(f"Importe medio del débito: {resumen['Importe medio del débito']:.2f}")
 
 # Define email sender and receiver
 email_sender = "http.joshua@gmail.com"
@@ -53,6 +58,8 @@ with open(logotipo, 'rb') as imagen:
 archivo_csv = "transacciones.csv"
 procesador = ProcesadorCSV(archivo_csv)
 procesador.cargar_transacciones()
+
+
 
 # Generar el resumen
 resumen = procesador.generar_resumen()
@@ -78,7 +85,7 @@ body = f"""
 </head>
 <body>
     <h1>Hola {email_receiver_name} - Resumen de cuenta y logotipo</h1>
-    <p>{generar_resumen_texto(resumen)}</p>
+    <p>{resumen(resumen)}</p>
     <img src="data:image/png;base64, {contenido_base64}" alt="Logo">
 </body>
 </html>
@@ -89,10 +96,10 @@ em = EmailMessage()
 em['From'] = email_sender
 em['To'] = email_receiver
 em['Subject'] = subject
-#em.set_content(body)
+em.set_content(body, subtype='html') # Establecer el cuerpo del mensaje como HTML
 
-# Establecer el cuerpo del mensaje como HTML
-em.set_content(body, subtype='html')
+
+
 # Add SSL (layer of security)
 context = ssl.create_default_context()
 
